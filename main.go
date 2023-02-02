@@ -59,7 +59,7 @@ func getAppsTraffic(c *gin.Context) {
 	}
 }
 
-func getAppsCPUUsage(c *gin.Context) {
+func getAppsCpuUsage(c *gin.Context) {
 	appGroupName := c.Query("app-group")
 	appName := c.Query("app")
 	rangeWidth := c.Query("range-width")
@@ -69,7 +69,7 @@ func getAppsCPUUsage(c *gin.Context) {
 	}
 
 	if appName != "" {
-		results, _, err := metrics.GetAppCPUUsage(appGroupName, appName, rangeWidth)
+		results, _, err := metrics.GetAppCpuUsage(appGroupName, appName, rangeWidth)
 
 		//fmt.Println(warnings)
 		if err != nil {
@@ -82,7 +82,7 @@ func getAppsCPUUsage(c *gin.Context) {
 			}
 		}
 	} else {
-		results, _, err := metrics.GetAppsCPUUsage(appGroupName, rangeWidth)
+		results, _, err := metrics.GetAppsCpuUsage(appGroupName, rangeWidth)
 
 		//fmt.Println(warnings)
 		if err != nil {
@@ -213,7 +213,7 @@ func getNodesAvailableMemory(c *gin.Context) {
 	}
 }
 
-func getNodesAvailableCPU(c *gin.Context) {
+func getNodesAvailableCpu(c *gin.Context) {
 	nodeName := c.Query("node")
 
 	rangeWidth := c.Query("range-width")
@@ -223,7 +223,7 @@ func getNodesAvailableCPU(c *gin.Context) {
 	}
 
 	if nodeName != "" {
-		results, _, err := metrics.GetNodeAvailableCPU(nodeName, rangeWidth)
+		results, _, err := metrics.GetNodeAvailableCpu(nodeName, rangeWidth)
 
 		//fmt.Println(warnings)
 		if err != nil {
@@ -234,7 +234,7 @@ func getNodesAvailableCPU(c *gin.Context) {
 			c.IndentedJSON(http.StatusOK, cpuValues)
 		}
 	} else {
-		results, _, err := metrics.GetNodesAvailableCPU(rangeWidth)
+		results, _, err := metrics.GetNodesAvailableCpu(rangeWidth)
 
 		//fmt.Println(warnings)
 		if err != nil {
@@ -252,11 +252,11 @@ func getNodesAvailableCPU(c *gin.Context) {
 func main() {
 	router := gin.Default()
 	router.GET("/metrics/apps/traffic", getAppsTraffic)
-	router.GET("/metrics/apps/cpu-usage", getAppsCPUUsage)
+	router.GET("/metrics/apps/cpu-usage", getAppsCpuUsage)
 	router.GET("/metrics/apps/memory-usage", getAppsMemoryUsage)
 	router.GET("/metrics/nodes/latencies", getNodesLatencies)
 	router.GET("/metrics/nodes/available-memory", getNodesAvailableMemory)
-	router.GET("/metrics/nodes/available-cpu", getNodesAvailableCPU)
+	router.GET("/metrics/nodes/available-cpu", getNodesAvailableCpu)
 
 	err := router.Run("0.0.0.0:8080")
 	if err != nil {

@@ -92,7 +92,7 @@ func GetAppsTraffic(appGroupName, rangeWidth string) (model.Vector, prometheus.W
 	return vector, warnings, err
 }
 
-func GetAppCPUUsage(appGroupName, appName, rangeWidth string) (model.Vector, prometheus.Warnings, error) {
+func GetAppCpuUsage(appGroupName, appName, rangeWidth string) (model.Vector, prometheus.Warnings, error) {
 	prometheusClient, err := newPrometheusClient(prometheusAddress)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create metrics client: %v", err)
@@ -118,7 +118,7 @@ func GetAppCPUUsage(appGroupName, appName, rangeWidth string) (model.Vector, pro
 	return vector, warnings, err
 }
 
-func GetAppsCPUUsage(appGroupName, rangeWidth string) (model.Vector, prometheus.Warnings, error) {
+func GetAppsCpuUsage(appGroupName, rangeWidth string) (model.Vector, prometheus.Warnings, error) {
 	prometheusClient, err := newPrometheusClient(prometheusAddress)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create metrics client: %v", err)
@@ -294,7 +294,7 @@ func GetNodesAvailableMemory(rangeWidth string) (model.Vector, prometheus.Warnin
 	return vector, warnings, err
 }
 
-func GetNodeAvailableCPU(nodeName, rangeWidth string) (model.Vector, prometheus.Warnings, error) {
+func GetNodeAvailableCpu(nodeName, rangeWidth string) (model.Vector, prometheus.Warnings, error) {
 	prometheusClient, err := newPrometheusClient(prometheusAddress)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create metrics client: %v", err)
@@ -319,7 +319,7 @@ func GetNodeAvailableCPU(nodeName, rangeWidth string) (model.Vector, prometheus.
 	return vector, warnings, err
 }
 
-func GetNodesAvailableCPU(rangeWidth string) (model.Vector, prometheus.Warnings, error) {
+func GetNodesAvailableCpu(rangeWidth string) (model.Vector, prometheus.Warnings, error) {
 	prometheusClient, err := newPrometheusClient(prometheusAddress)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create metrics client: %v", err)
