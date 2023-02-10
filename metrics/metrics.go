@@ -57,6 +57,76 @@ func GetAppTraffic(appGroupName, appName, rangeWidth string) (model.Vector, prom
 	return vector, warnings, err
 }
 
+func GetAppInboundTraffic(appGroupName, appName, rangeWidth string) (model.Vector, prometheus.Warnings, error) {
+	prometheusClient, err := newPrometheusClient(prometheusAddress)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to create metrics client: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	result, warnings, err := prometheusClient.Query(ctx, `
+		sum(
+			rate(istio_request_bytes_sum{app_group="`+appGroupName+`", app="`+appName+`", source_app!="unknown", destination_app!="`+appName+`"}[`+rangeWidth+`])
+			+
+			rate(istio_response_bytes_sum{app_group="`+appGroupName+`", app="`+appName+`", source_app!="unknown", destination_app!="`+appName+`"}[`+rangeWidth+`])
+		) by (source_app, destination_app)
+		or 
+		sum(
+			rate(istio_tcp_sent_bytes_total{app_group="`+appGroupName+`", app="`+appName+`", source_app!="unknown", destination_app!="`+appName+`"}[`+rangeWidth+`]) 
+			+ 
+			rate(istio_tcp_received_bytes_total{app_group="`+appGroupName+`", app="`+appName+`", source_app!="unknown", destination_app!="`+appName+`"}[`+rangeWidth+`])
+		) by (source_app, destination_app)
+	`, time.Now())
+
+	if err != nil {
+		return nil, nil, fmt.Errorf("error during query execution: %v", err)
+	}
+
+	vector, ok := result.(model.Vector)
+
+	if !ok {
+		return nil, nil, fmt.Errorf("query result is not a vector: %v", err)
+	}
+
+	return vector, warnings, err
+}
+
+func GetAppOutboundTraffic(appGroupName, appName, rangeWidth string) (model.Vector, prometheus.Warnings, error) {
+	prometheusClient, err := newPrometheusClient(prometheusAddress)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to create metrics client: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	result, warnings, err := prometheusClient.Query(ctx, `
+		sum(
+			rate(istio_request_bytes_sum{app_group="`+appGroupName+`", app="`+appName+`", source_app!="`+appName+`", destination_app!="unknown"}[`+rangeWidth+`])
+			+
+			rate(istio_response_bytes_sum{app_group="`+appGroupName+`", app="`+appName+`", source_app!="`+appName+`", destination_app!="unknown"}[`+rangeWidth+`])
+		) by (source_app, destination_app)
+		or 
+		sum(
+			rate(istio_tcp_sent_bytes_total{app_group="`+appGroupName+`", app="`+appName+`", source_app!="`+appName+`", destination_app!="unknown"}[`+rangeWidth+`]) 
+			+ 
+			rate(istio_tcp_received_bytes_total{app_group="`+appGroupName+`", app="`+appName+`", source_app!="`+appName+`", destination_app!="unknown"}[`+rangeWidth+`])
+		) by (source_app, destination_app)
+	`, time.Now())
+
+	if err != nil {
+		return nil, nil, fmt.Errorf("error during query execution: %v", err)
+	}
+
+	vector, ok := result.(model.Vector)
+
+	if !ok {
+		return nil, nil, fmt.Errorf("query result is not a vector: %v", err)
+	}
+
+	return vector, warnings, err
+}
+
 func GetAppsTraffic(appGroupName, rangeWidth string) (model.Vector, prometheus.Warnings, error) {
 	prometheusClient, err := newPrometheusClient(prometheusAddress)
 	if err != nil {

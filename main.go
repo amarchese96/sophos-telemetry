@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"github.com/amarchese96/sophos-telemetry/metrics"
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/common/model"
 	"net/http"
 )
 
 func getAppsTraffic(c *gin.Context) {
 	appGroupName := c.Query("app-group")
 	appName := c.Query("app")
+	direction := c.Query("direction")
 	rangeWidth := c.Query("range-width")
 
 	if rangeWidth == "" {
@@ -17,7 +19,17 @@ func getAppsTraffic(c *gin.Context) {
 	}
 
 	if appName != "" {
-		results, _, err := metrics.GetAppTraffic(appGroupName, appName, rangeWidth)
+		var results model.Vector
+		var err error
+
+		switch direction {
+		case "inbound":
+			results, _, err = metrics.GetAppInboundTraffic(appGroupName, appName, rangeWidth)
+		case "outbound":
+			results, _, err = metrics.GetAppOutboundTraffic(appGroupName, appName, rangeWidth)
+		default:
+			results, _, err = metrics.GetAppTraffic(appGroupName, appName, rangeWidth)
+		}
 
 		//fmt.Println(warnings)
 		if err != nil {
