@@ -67,15 +67,15 @@ func GetAppInboundTraffic(appGroupName, appName, rangeWidth string) (model.Vecto
 	defer cancel()
 	result, warnings, err := prometheusClient.Query(ctx, `
 		sum(
-			rate(istio_request_bytes_sum{app_group="`+appGroupName+`", app="`+appName+`", source_app!="unknown", destination_app!="`+appName+`"}[`+rangeWidth+`])
+			rate(istio_request_bytes_sum{app_group="`+appGroupName+`", app="`+appName+`", source_app!="unknown", destination_app="`+appName+`"}[`+rangeWidth+`])
 			+
-			rate(istio_response_bytes_sum{app_group="`+appGroupName+`", app="`+appName+`", source_app!="unknown", destination_app!="`+appName+`"}[`+rangeWidth+`])
+			rate(istio_response_bytes_sum{app_group="`+appGroupName+`", app="`+appName+`", source_app!="unknown", destination_app="`+appName+`"}[`+rangeWidth+`])
 		) by (source_app, destination_app)
 		or 
 		sum(
-			rate(istio_tcp_sent_bytes_total{app_group="`+appGroupName+`", app="`+appName+`", source_app!="unknown", destination_app!="`+appName+`"}[`+rangeWidth+`]) 
+			rate(istio_tcp_sent_bytes_total{app_group="`+appGroupName+`", app="`+appName+`", source_app!="unknown", destination_app="`+appName+`"}[`+rangeWidth+`]) 
 			+ 
-			rate(istio_tcp_received_bytes_total{app_group="`+appGroupName+`", app="`+appName+`", source_app!="unknown", destination_app!="`+appName+`"}[`+rangeWidth+`])
+			rate(istio_tcp_received_bytes_total{app_group="`+appGroupName+`", app="`+appName+`", source_app!="unknown", destination_app="`+appName+`"}[`+rangeWidth+`])
 		) by (source_app, destination_app)
 	`, time.Now())
 
@@ -102,15 +102,15 @@ func GetAppOutboundTraffic(appGroupName, appName, rangeWidth string) (model.Vect
 	defer cancel()
 	result, warnings, err := prometheusClient.Query(ctx, `
 		sum(
-			rate(istio_request_bytes_sum{app_group="`+appGroupName+`", app="`+appName+`", source_app!="`+appName+`", destination_app!="unknown"}[`+rangeWidth+`])
+			rate(istio_request_bytes_sum{app_group="`+appGroupName+`", app="`+appName+`", source_app="`+appName+`", destination_app!="unknown"}[`+rangeWidth+`])
 			+
-			rate(istio_response_bytes_sum{app_group="`+appGroupName+`", app="`+appName+`", source_app!="`+appName+`", destination_app!="unknown"}[`+rangeWidth+`])
+			rate(istio_response_bytes_sum{app_group="`+appGroupName+`", app="`+appName+`", source_app="`+appName+`", destination_app!="unknown"}[`+rangeWidth+`])
 		) by (source_app, destination_app)
 		or 
 		sum(
-			rate(istio_tcp_sent_bytes_total{app_group="`+appGroupName+`", app="`+appName+`", source_app!="`+appName+`", destination_app!="unknown"}[`+rangeWidth+`]) 
+			rate(istio_tcp_sent_bytes_total{app_group="`+appGroupName+`", app="`+appName+`", source_app="`+appName+`", destination_app!="unknown"}[`+rangeWidth+`]) 
 			+ 
-			rate(istio_tcp_received_bytes_total{app_group="`+appGroupName+`", app="`+appName+`", source_app!="`+appName+`", destination_app!="unknown"}[`+rangeWidth+`])
+			rate(istio_tcp_received_bytes_total{app_group="`+appGroupName+`", app="`+appName+`", source_app="`+appName+`", destination_app!="unknown"}[`+rangeWidth+`])
 		) by (source_app, destination_app)
 	`, time.Now())
 
