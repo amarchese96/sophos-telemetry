@@ -205,9 +205,11 @@ func getNodesAvailableMemory(c *gin.Context) {
 		if err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, err)
 		} else {
-			memoryValues := map[string]float64{}
-			memoryValues[string(results[0].Metric["kubernetes_node"])] = float64(results[0].Value)
-			c.IndentedJSON(http.StatusOK, memoryValues)
+			if len(results) < 1 {
+				c.IndentedJSON(http.StatusNotFound, fmt.Errorf("available memory metrics for node %s not found", nodeName))
+			} else {
+				c.IndentedJSON(http.StatusOK, float64(results[0].Value))
+			}
 		}
 	} else {
 		results, _, err := metrics.GetNodesAvailableMemory(rangeWidth)
@@ -241,9 +243,11 @@ func getNodesAvailableCpu(c *gin.Context) {
 		if err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, err)
 		} else {
-			cpuValues := map[string]float64{}
-			cpuValues[string(results[0].Metric["kubernetes_node"])] = float64(results[0].Value)
-			c.IndentedJSON(http.StatusOK, cpuValues)
+			if len(results) < 1 {
+				c.IndentedJSON(http.StatusNotFound, fmt.Errorf("available cpu metrics for node %s not found", nodeName))
+			} else {
+				c.IndentedJSON(http.StatusOK, float64(results[0].Value))
+			}
 		}
 	} else {
 		results, _, err := metrics.GetNodesAvailableCpu(rangeWidth)
