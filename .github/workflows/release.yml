@@ -46,7 +46,7 @@ jobs:
         run: |
           #!/usr/bin/env bash
           set -euo pipefail
-          make docker-push ${IMG}
+          make docker-push IMG=${IMG}
         shell: bash
         env:
           IMG: ${{ env.REGISTRY }}/${{ env.IMG_NAME }}:${{ steps.vars.outputs.tag }}
