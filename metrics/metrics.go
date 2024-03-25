@@ -374,7 +374,7 @@ func GetNodeCpuUsage(nodeName, rangeWidth string) (model.Vector, prometheus.Warn
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	result, warnings, err := prometheusClient.Query(ctx, `
-		sum by (node_name) (rate(node_cpu_seconds_total{node_name="`+nodeName+`",mode!="idle"}[`+rangeWidth+`]))
+		sum by (node_name) (rate(node_cpu_seconds_total{node_name="`+nodeName+`",mode!="idle"}[`+rangeWidth+`])) * 1000
 	`, time.Now())
 
 	if err != nil {
@@ -399,7 +399,7 @@ func GetNodesCpuUsage(rangeWidth string) (model.Vector, prometheus.Warnings, err
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	result, warnings, err := prometheusClient.Query(ctx, `
-		sum by (node_name) (rate(node_cpu_seconds_total{mode!="idle"}[`+rangeWidth+`]))
+		sum by (node_name) (rate(node_cpu_seconds_total{mode!="idle"}[`+rangeWidth+`])) * 1000
 	`, time.Now())
 
 	if err != nil {
