@@ -1,4 +1,4 @@
-IMG ?= ghcr.io/amarchese96/sophos-telemetry:latest
+IMG ?= ghcr.io/unict-cclab/sophos-telemetry:latest
 PROMETHEUS_ADDRESS ?= http://localhost:9090
 
 run:
